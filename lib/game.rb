@@ -9,5 +9,10 @@ class Game
 
     def start()
         @positions.update_board
+        next_move
+    end
+
+    def next_move()
+      
     end
 end
