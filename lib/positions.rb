@@ -1,87 +1,128 @@
 require "byebug"
+require_relative 'Cell'
+
 class Positions
     def initialize
-        @cells = Array.new(8, Array.new(8,"").clone)
-        @king_movements = [
-            {"x"=> 1, "y"=> -1},
-            {"x"=> 1, "y"=> 0},
-            {"x"=> 1, "y"=> 1},
-            {"x"=> 0, "y"=> -1},
-            {"x"=> 0, "y"=> 1},
-            {"x"=> -1, "y"=> -1},
-            {"x"=> -1, "y"=> 0},
-            {"x"=> -1, "y"=> 1}
+        @knight_movements = [
+            Cell.new(1,2),
+            Cell.new(1,-2),
+            Cell.new(2,1),
+            Cell.new(2,-1),
+            Cell.new(-1,2),
+            Cell.new(-1,-2),
+            Cell.new(-2,1),
+            Cell.new(-2,-1)
         ]
+
+        @king_movements = [
+            Cell.new(1,-1),
+            Cell.new(1,0),
+            Cell.new(1,1),
+            Cell.new(0,-1),
+            Cell.new(0,1),
+            Cell.new(-1,-1),
+            Cell.new(-1,0),
+            Cell.new(-1,1)
+        ]
+
+        @bishop_movements = [
+            Cell.new(1,1),
+            Cell.new(1,-1),
+            Cell.new(-1,1),
+            Cell.new(-1,-1)
+        ]
+
+        @rock_movements = [
+            Cell.new(0,1),
+            Cell.new(0,-1),
+            Cell.new(1,0),
+            Cell.new(-1,0)
+        ]
+
+        @last_movement = ",,,,,,"
+        @black_long_castling = true
+        @lack_short_castling = true
+        @white_long_castling = true
+        @white_short_castling = true
+
+        @next_black_queen = 2
+        @next_black_rock = 3
+        @next_black_bishop = 3
+        @next_black_knight = 3
+        @next_white_queen = 2
+        @next_white_rock = 3
+        @next_white_bishop = 3
+        @next_white_knight = 3
+
+        @cells = Array.new(8, Array.new(8,"").clone)
+        @temp_cells = Array.new(8, Array.new(8,"").clone)
+
         @black_pieces = {
-                "br1" => {"x"=> 0, "y"=> 0}, 
-                "bn1" => {"x"=> 0, "y"=> 1}, 
-                "bb1" => {"x"=> 0, "y"=> 2}, 
-                "bq1" => {"x"=> 0, "y"=> 3}, 
-                "bk" => {"x"=> 0, "y"=> 4}, 
-                "bb2" => {"x"=> 0, "y"=> 5}, 
-                "bn2" => {"x"=> 0, "y"=> 6}, 
-                "br2" => {"x"=> 0, "y"=> 7}, 
-                "bp1" => {"x"=> 1, "y"=> 0}, 
-                "bp2" => {"x"=> 1, "y"=> 1}, 
-                "bp3" => {"x"=> 1, "y"=> 2}, 
-                "bp4" => {"x"=> 1, "y"=> 3}, 
-                "bp5" => {"x"=> 1, "y"=> 4}, 
-                "bp6" => {"x"=> 1, "y"=> 5}, 
-                "bp7" => {"x"=> 1, "y"=> 6}, 
-                "bp8" => {"x"=> 1, "y"=> 7}
+                "br1" => Cell.new(0,0), 
+                "bn1" => Cell.new(0,1), 
+                "bb1" => Cell.new(0,2), 
+                "bq1" => Cell.new(0,3), 
+                "bk"  => Cell.new(0,4), 
+                "bb2" => Cell.new(0,5), 
+                "bn2" => Cell.new(0,6), 
+                "br2" => Cell.new(0,7), 
+                "bp1" => Cell.new(1,0), 
+                "bp2" => Cell.new(1,1), 
+                "bp3" => Cell.new(1,2), 
+                "bp4" => Cell.new(1,3), 
+                "bp5" => Cell.new(1,4), 
+                "bp6" => Cell.new(1,5), 
+                "bp7" => Cell.new(1,6), 
+                "bp8" => Cell.new(1,7)
             }
         @white_pieces = {
-                "wp1" => {"x"=> 6, "y"=> 0}, 
-                "wp2" => {"x"=> 6, "y"=> 1}, 
-                "wp3" => {"x"=> 6, "y"=> 2}, 
-                "wp4" => {"x"=> 6, "y"=> 3}, 
-                "wp5" => {"x"=> 6, "y"=> 4}, 
-                "wp6" => {"x"=> 6, "y"=> 5}, 
-                "wp7" => {"x"=> 6, "y"=> 6}, 
-                "wp8" => {"x"=> 6, "y"=> 7},
-                "wr1" => {"x"=> 7, "y"=> 0}, 
-                "wn1" => {"x"=> 7, "y"=> 1}, 
-                "wb1" => {"x"=> 7, "y"=> 2}, 
-                "wq1" => {"x"=> 7, "y"=> 3}, 
-                "wk" => {"x"=> 7, "y"=> 4}, 
-                "wb2" => {"x"=> 7, "y"=> 5}, 
-                "wn2" => {"x"=> 7, "y"=> 6}, 
-                "wr2" => {"x"=> 7, "y"=> 7}
+                "wp1" => Cell.new(0,0), 
+                "wp2" => Cell.new(0,1), 
+                "wp3" => Cell.new(0,2), 
+                "wp4" => Cell.new(0,3), 
+                "wp5" => Cell.new(0,4), 
+                "wp6" => Cell.new(0,5), 
+                "wp7" => Cell.new(0,6), 
+                "wp8" => Cell.new(0,7),
+                "wr1" => Cell.new(1,0), 
+                "wn1" => Cell.new(1,1), 
+                "wb1" => Cell.new(1,2), 
+                "wq1" => Cell.new(1,3), 
+                "wk"  => Cell.new(1,4), 
+                "wb2" => Cell.new(1,5), 
+                "wn2" => Cell.new(1,6), 
+                "wr2" => Cell.new(1,7)
             }
     end
 
-    def update_board
-        @cells = Array.new(8, Array.new(8,"").clone)
-        add_pieces(@black_pieces)
-        add_pieces(@white_pieces)
-    end
-
-    def add_pieces(pieces)
-        pieces.each do |key, value|
-            @cells[value["x"]][value["y"]]=key
-        end
-    end
-
-    def king_moves(king)
-        @king_movements.each do |m|
-            x=@cells[king]["x"]+m["x"]
-            y=@cells[king]["y"]+m["y"]
-            new_cell = get_cell(x,y)
-            if new_cell=="" || enemy_color?(king, new_cell)
-                
-            end
-        end
-    end
-
-    def enemy_color?(piece1, piece2)
-        color1=piece1.split("")[0]
-        color2=piece1.split("")[0]
-        return true if (color1=="w" && color2=="b") || (color1=="b" && color2=="w")
+    def white_king_attacked(king)
+        return true if (attacked_by_black_pawn(king.y, king.x))
+        || (attacked_by_black_knight(king.y, king.x))
+        || (attacked_by_black_king(king.y, king.x))
+        || (attacked_by_black_in_diagonals(king.y, king.x))
+        || (attacked_by_black_in_rowcolumns(king.y, king.x))
         false
     end
 
-    def get_cell(x, y)
-        return "-1" if (x>=0 && x<=7 && y>=0 && y<=7)
-        @cells[x][y]
+    def black_king_attacked(king)
+        return true if (attacked_by_white_pawn(king.y, king.x))
+        || (attacked_by_white_knight(king.y, king.x))
+        || (attacked_by_white_king(king.y, king.x))
+        || (attacked_by_white_in_diagonals(king.y, king.x)) 
+        || (attacked_by_white_in_rowcolumns(king.y, king.x)) 
+        false
+    end
+
+    def available_black_moves
+        moves = Hash.new
+        moves.merge(available_black_king_moves)
+        @black_pieces.each do |piece, position|
+            if ("bn"=~/^(bn)/)==0 then moves.merge(available_black_knight_moves(piece, position))
+            elsif("bn"=~/^(bb)/)==0 then moves.merge(available_black_bishop_moves((piece, position)))
+            elsif("bn"=~/^(br)/)==0 then moves.merge(available_black_rock_moves((piece, position)))
+            elsif("bn"=~/^(bq)/)==0 then moves.merge(available_black_queen_moves((piece, position)))
+            elsif("bn"=~/^(bp)/)==0 then moves.merge(available_black_pawn_moves((piece, position))) end
+        end
+        moves
     end
 end
