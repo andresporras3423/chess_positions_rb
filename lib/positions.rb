@@ -1,4 +1,5 @@
 require "byebug"
+require 'set'
 require_relative "Cell"
 
 class Positions
@@ -106,7 +107,7 @@ class Positions
   end
 
   def available_black_moves
-    moves = Hash.new
+    moves = Set.new
     moves.merge(available_black_king_moves)
     @black_pieces.each do |piece, position|
       if ("bn" =~ /^(bn)/) == 0
@@ -126,7 +127,7 @@ class Positions
 
   def available_black_king_moves()
     king = @black_pieces["bk"]
-    available_movements = Hash.new
+    available_movements = Set.new
     @king_movements.each do |king_movement|
       n_cell = valid_position(king.y + king_movement.y, king.x + king_movement.x)
       if (n_cell == "" || n_cell =~ /^[w]/)
@@ -134,41 +135,103 @@ class Positions
         @temp_cells[king.y][king.x] = ""
         @temp_cells[king.y + king_movement.y][king.x + king_movement.x] = "bk"
         unless (black_king_attacked(Cell.new(king.y + king_movement.y, king.x + king_movement.x)))
-          available_movements.Add("bk,#{king.y},#{king.x},bk,#{king.y + king_movement.y},#{king.x + king_movement.x},#{cells[king.y + king_movement.y][king.x + king_movement.x]}")
+          available_movements.add("bk,#{king.y},#{king.x},bk,#{king.y + king_movement.y},#{king.x + king_movement.x},#{cells[king.y + king_movement.y][king.x + king_movement.x]}")
         end
       end
     end
 
     @temp_cells = cells.clone()
-    if (black_long_castling && cells[0][1] == "" && cells[0][2] == "" && cells[0][3] == "" && !black_king_attacked(Cell.new(king.y, king.x)) && !black_king_attacked(Cell.new(king.y, king.x - 1)) && !black_king_attacked(Cell.new(king.y, king.x - 2)))
-      available_movements.Add("bk,#{king.y},#{king.x},bk,#{king.y},#{king.x - 2},#{cells[king.y][king.x - 2]}")
+    if (@black_long_castling && @cells[0][1] == "" && @cells[0][2] == "" && @cells[0][3] == "" && !black_king_attacked(Cell.new(king.y, king.x)) && !black_king_attacked(Cell.new(king.y, king.x - 1)) && !black_king_attacked(Cell.new(king.y, king.x - 2)))
+      available_movements.add("bk,#{king.y},#{king.x},bk,#{king.y},#{king.x - 2},#{cells[king.y][king.x - 2]}")
     end
-    if (black_short_castling && cells[0][5] == "" && cells[0][6] == "" && !black_king_attacked(Cell.new(king.y, king.x)) && !black_king_attacked(Cell.new(king.y, king.x + 1)) && !black_king_attacked(Cell.new(king.y, king.x + 2)))
-      available_movements.Add("bk,#{king.y},#{king.x},bk,#{king.y},#{king.x + 2},#{cells[king.y][king.x + 2]}")
+    if (@black_short_castling && @cells[0][5] == "" && @cells[0][6] == "" && !black_king_attacked(Cell.new(king.y, king.x)) && !black_king_attacked(Cell.new(king.y, king.x + 1)) && !black_king_attacked(Cell.new(king.y, king.x + 2)))
+      available_movements.add("bk,#{king.y},#{king.x},bk,#{king.y},#{king.x + 2},#{cells[king.y][king.x + 2]}")
     end
     available_movements
   end
 
   def available_black_knight_moves(piece, knight)
-    king = black_pieces["bk"]
-    available_movements = Hash.new
+    king = @black_pieces["bk"]
+    available_movements = Set.new
     knight_movements.each do |knight_movement|
       cell_ = valid_position(knight.y + knight_movement.y, knight.x + knight_movement.x)
       if (cell_ == "" || cell_[0] == "w")
         @temp_cells = @cells.clone
-        @temp_cells[knight.y, knight.x] = ""
-        @temp_cells[knight.y + knight_movement.y, knight.x + knight_movement.x] = @cells[knight.x, knight.y]
-        unless (black_king_attacked(new Cell(king.y, king.x)))
-          @available_movements.push("#{piece},#{knight.y},#{knight.x},#{piece},#{knight.y + knight_movements.y},#{knight.x + knight_movements.x},#{cells[knight.y + knight_movements.y, knight.x + knight_movements.x]}")
+        @temp_cells[knight.y][knight.x] = ""
+        @temp_cells[knight.y + knight_movement.y][knight.x + knight_movement.x] = @cells[knight.x][knight.y]
+        unless (black_king_attacked(Cell.new(king.y, king.x)))
+          available_movements.add("#{piece},#{knight.y},#{knight.x},#{piece},#{knight.y + knight_movements.y},#{knight.x + knight_movements.x},#{cells[knight.y + knight_movements.y, knight.x + knight_movements.x]}")
         end
       end
     end
     available_movements
   end
 
+  def available_black_pawn_moves(piece, pawn)
+    king = @blackPieces["bk"]
+    available_movements = Set.new
+    cell_ = valid_position(pawn.y, pawn.x)
+    if(cell_=="")
+      @temp_cells = @cells.clone()
+      @temp_cells[pawn.y, pawn.x] = ""
+      @temp_cells[pawn.y + 1][pawn.x] = @cells[pawn.y][pawn.x]
+      unless(black_king_attacked(Cell.new(king.y, king.x)))
+        if(pawn.y+1<7) then available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 1},#{pawn.x},")
+        else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y + 1, pawn.x, available_movements)
+      end
+    end
+    if(pawn.y==1)
+      cell_ = valid_position(pawn.y+1, pawn.x)
+      cell2_ = valid_position(pawn.y+2, pawn.x)
+      if(cell_=="" && cell2_=="")
+        @temp_cells = @cells.clone
+        @temp_cells[pawn.y][pawn.x]=""
+        @temp_cells[pawn.y+2][pawn.x] = @cells[pawn.y][pawn.x]
+        availableMovements.Add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 2},#{pawn.x},") unless black_king_attacked(Cell.new(king.y, king.x))
+      end
+    end
+    cell_ = valid_position(pawn.y+1, pawn.x+1)
+    if(cell_[0]=="w")
+      @temp_cells = @cells.clone
+      @temp_cells[pawn.y][pawn.x] = ""
+      @tempCells[pawn.y + 1][pawn.x + 1] = @cells[pawn.y][pawn.x]
+      unless(black_king_attacked(Cell.new(king.y, king.x)))
+        if(pawn.y+1<7) then available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 1},#{pawn.x + 1},#{@cells[pawn.y + 1][pawn.x + 1]}")
+        else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y + 1, pawn.x + 1, available_movements) end
+      end
+    end
+
+    cell_ = valid_position(pawn.y+1, pawn.x-1)
+    if(cell_[0]=="w")
+      @temp_cells = @cells.clone
+      @temp_cells[pawn.y][pawn.x] = ""
+      @temp_cells[pawn.y+1][parn.x-1] = @cells[pawn.y][pawn.x]
+      unless black_king_attacked(Cell.new(king.y, king.x))
+        if(pawn.y+1<7) then available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 1},#{pawn.x - 1},#{@cells[pawn.y + 1][pawn.x - 1]}")
+        else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y + 1, pawn.x - 1, available_movements) end
+      end
+    end
+
+    if(can_black_en_passant(pawn.y, pawn.x + 1))
+      @temp_cells = @cells.clone
+      @temp_cells[pawn.y][pawn.x] = ""
+      @temp_cells[pawn.y][pawn.x+1] = ""
+      @temp_cells[pawn.y+1][pawn.x+1]=@cells[pawn.y][pawn.x]
+      available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 1},#{pawn.x + 1},#{@cells[pawn.y][pawn.x + 1]}") unless black_king_attacked(Cell.new(king.y, king.x))
+    end
+
+    if(can_black_en_passant(pawn.y, pawn.x - 1))
+      @temp_cells = @cells.clone
+      @temp_cells[pawn.y][pawn.x] = ""
+      @temp_cells[pawn.y][pawn.x-1] = ""
+      @temp_cells[pawn.y+1][pawn.x-1]=@cells[pawn.y][pawn.x]
+      available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 1},#{pawn.x - 1},#{@cells[pawn.y][pawn.x - 1]}") unless black_king_attacked(Cell.new(king.y, king.x))
+    end
+  end
+
   ############################################################################
   def valid_position(y, x)
-    return cells[y, x] if y >= 0 && y <= 7 && x >= 0 && x <= 7
+    return @cells[y][x] if y >= 0 && y <= 7 && x >= 0 && x <= 7
     "v"
   end
 end
