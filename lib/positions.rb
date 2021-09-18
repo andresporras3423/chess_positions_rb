@@ -149,6 +149,23 @@ class Positions
     available_movements
   end
 
+  def available_black_knight_moves(piece, knight)
+    king = black_pieces["bk"]
+    available_movements = Hash.new
+    knight_movements.each do |knight_movement|
+      cell_ = valid_position(knight.y + knight_movement.y, knight.x + knight_movement.x)
+      if (cell_ == "" || cell_[0] == "w")
+        @temp_cells = @cells.clone
+        @temp_cells[knight.y, knight.x] = ""
+        @temp_cells[knight.y + knight_movement.y, knight.x + knight_movement.x] = @cells[knight.x, knight.y]
+        unless (black_king_attacked(new Cell(king.y, king.x)))
+          @available_movements.push("#{piece},#{knight.y},#{knight.x},#{piece},#{knight.y + knight_movements.y},#{knight.x + knight_movements.x},#{cells[knight.y + knight_movements.y, knight.x + knight_movements.x]}")
+        end
+      end
+    end
+    available_movements
+  end
+
   ############################################################################
   def valid_position(y, x)
     return cells[y, x] if y >= 0 && y <= 7 && x >= 0 && x <= 7
