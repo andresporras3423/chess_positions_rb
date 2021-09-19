@@ -229,6 +229,128 @@ class Positions
     end
   end
 
+  def can_black_en_passant(y, x)
+    move_details = @last_movement.split(",")
+    if (move_details[0]=~/^w/ &&
+                    move_details[1].to_i == y + 2 &&
+                    move_details[2].to_i == x &&
+                    move_details[3]=~/^w/ &&
+                    move_details[4].to_i == y &&
+                    move_details[5].to_i == x &&
+                    move_details[6] == "")
+                    return true
+    end
+    false
+  end
+
+  def can_black_en_passant(y, x)
+    move_details = @last_movement.split(",")
+    if (move_details[0]=~/^b/ &&
+                    move_details[1].to_i == y - 2 &&
+                    move_details[2].to_i == x &&
+                    move_details[3]=~/^b/ &&
+                    move_details[4].to_i == y &&
+                    move_details[5].to_i == x &&
+                    move_details[6] == "")
+                    return true
+    end
+    false
+  end
+
+  def available_black_bishop_moves(piece, bishop)
+    king = @black_pieces["bk"]
+    available_movements = Set.new
+    @bishop_movements.each do |bishop_movement|
+      position_ = Cell.new(bishop.y, bishop.x)
+      loop do
+        position_.x += bishop_movement.x
+        position_.y += bishop_movement.y
+        cell_=valid_position(position_.y, position_.x)
+        if(cell_=="" || cell_=~/^w/)
+          @temp_cells = @cells.clone
+          @temp_cells = ""
+          @temp_cells[position_.y][position_.x] = @cells[bishop.y][bishop.x]
+          unless black_king_attacked(Cell.new(king.y, king.x))
+            available_movements.add("#{piece},#{bishop.y},#{bishop.x},#{piece},#{position_.y},#{position_.x},#{@cells[position_.y][position_.x]}")
+          end
+        end
+        break if(cell_!="")
+      end
+    end
+    available_movements
+  end
+
+  def available_black_rock_moves(piece, rock)
+    king = @black_pieces["bk"]
+    available_movements = Set.new
+    @rock_movements.each do |rock_movement|
+      position_ = Cell.new(rock.y, rock.x)
+      loop do
+        position_.x+=rock_movement.x
+        position_.y += rock_movement.y 
+        cell_ = valid_position(position_.y, position_.x)
+        if(cell_=="" || cell_=~/^w/)
+          @temp_cells = @cells.clone
+          @temp_cells[rock.y][rock.x] = ""
+          @temp_cells[position_.y][position_.x] = @cells[rock.y, rock.x]
+          unless black_king_attacked(Cell.new(king.y, king.x))
+            available_movements.add("#{piece},#{rock.y},#{rock.x},#{piece},#{position_.y},#{position_.x},#{@cells[position_.y, position_.x]}")
+          end
+        end
+        break if (cell_!="")
+      end
+    end
+    available_movements
+  end
+
+  # public HashSet<string> available_black_queen_moves(string piece, Cell queen)
+  # {
+  #     Cell king = blackPieces["bk"];
+  #     HashSet<string> availableMovements = new HashSet<string>();
+  #     foreach (var rockMovement in rockMovements)
+  #     {
+  #         Cell nPosition = new Cell(queen.y, queen.x);
+  #         while (true)
+  #         {
+  #             nPosition.x += rockMovement.x;
+  #             nPosition.y += rockMovement.y;
+  #             string nCell = valid_position(nPosition.y, nPosition.x);
+  #             if (nCell == "" || Regex.Match(nCell, @"^w").Success)
+  #             {
+  #                 tempCells = (string[,])cells.Clone();
+  #                 tempCells[queen.y, queen.x] = "";
+  #                 tempCells[nPosition.y, nPosition.x] = cells[queen.y, queen.x];
+  #                 if (!black_king_attacked(new Cell(king.y, king.x)))
+  #                 {
+  #                     availableMovements.Add($"{piece},{queen.y},{queen.x},{piece},{nPosition.y},{nPosition.x},{cells[nPosition.y, nPosition.x]}");
+  #                 }
+  #             }
+  #             if (nCell != "") break;
+  #         }
+  #     }
+  #     foreach (var bishopMovement in bishopMovements)
+  #     {
+  #         Cell nPosition = new Cell(queen.y, queen.x);
+  #         while (true)
+  #         {
+  #             nPosition.x += bishopMovement.x;
+  #             nPosition.y += bishopMovement.y;
+  #             string nCell = valid_position(nPosition.y, nPosition.x);
+  #             if (nCell == "" || Regex.Match(nCell, @"^w").Success)
+  #             {
+  #                 tempCells = (string[,])cells.Clone();
+  #                 tempCells[queen.y, queen.x] = "";
+  #                 tempCells[nPosition.y, nPosition.x] = cells[queen.y, queen.x];
+  #                 if (!black_king_attacked(new Cell(king.y, king.x)))
+  #                 {
+  #                     availableMovements.Add($"{piece},{queen.y},{queen.x},{piece},{nPosition.y},{nPosition.x},{cells[nPosition.y, nPosition.x]}");
+  #                 }
+  #             }
+  #             if (nCell != "") break;
+  #         }
+  #     }
+  #     return availableMovements;
+  # }
   ############################################################################
   def valid_position(y, x)
     return @cells[y][x] if y >= 0 && y <= 7 && x >= 0 && x <= 7
