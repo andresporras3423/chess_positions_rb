@@ -562,12 +562,12 @@ class Positions
   end
 
   def attacked_by_black_pawn(y, x)
-    return true if (valid_temp_position(y - 1, x + 1, 0, 2) == "bp" || valid_temp_position(y - 1, x - 1, 0, 2) == "bp")
+    return true if (valid_temp_piece(y - 1, x + 1, 0, 2) == "bp" || valid_temp_piece(y - 1, x - 1, 0, 2) == "bp")
     false
   end
 
   def attacked_by_black_knight(y, x)
-    return true if (valid_temp_position(y - 2, x + 1, 0, 2) == "bn" || valid_temp_position(y - 2, x - 1, 0, 2) == "bn" || valid_temp_position(y + 2, x - 1, 0, 2) == "bn" || valid_temp_position(y + 2, x + 1, 0, 2) == "bn" || valid_temp_position(y - 1, x + 2, 0, 2) == "bn" || valid_temp_position(y - 1, x - 2, 0, 2) == "bn" || valid_temp_position(y + 1, x + 2, 0, 2) == "bn" || valid_temp_position(y + 1, x - 2, 0, 2) == "bn")
+    return true if (valid_temp_piece(y - 2, x + 1, 0, 2) == "bn" || valid_temp_piece(y - 2, x - 1, 0, 2) == "bn" || valid_temp_piece(y + 2, x - 1, 0, 2) == "bn" || valid_temp_piece(y + 2, x + 1, 0, 2) == "bn" || valid_temp_piece(y - 1, x + 2, 0, 2) == "bn" || valid_temp_piece(y - 1, x - 2, 0, 2) == "bn" || valid_temp_piece(y + 1, x + 2, 0, 2) == "bn" || valid_temp_piece(y + 1, x - 2, 0, 2) == "bn")
     false
   end
 
@@ -576,9 +576,104 @@ class Positions
     false
   end
 
-  ################################################################
+  def attacked_by_black_in_diagonals(y, x)
+    @bishop_movements.each do |bishop_movement|
+      new_y = y
+      new_x = x
+      loop do
+        new_y+=bishop_movement.y
+        new_x+=bishop_movement.x
+        if(valid_temp_piece(new_y_new_x, 0, 2) == 'bq' || valid_temp_piece(new_y_new_x, 0, 2) == 'bb')
+          return true
+        elsif(valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
+          break
+        end
+      end
+    end
+    false
+  end
+
+  def attacked_by_black_in_rowcolumns(y, x)
+    @rock_movements.each do |rock_movement|
+      new_y = y
+      new_x = x
+      loop do
+        new_y+=rock_movement.y
+        new_x+=rock_movement.x
+        if(valid_temp_piece(new_y_new_x, 0, 2) == 'bq' || valid_temp_piece(new_y_new_x, 0, 2) == 'br')
+          return true
+        elsif(valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
+          break
+        end
+      end
+    end
+    false
+  end
+
+  def attacked_by_white_pawn(y, x)
+    return true if(valid_temp_piece(y + 1, x + 1,0, 2) == "wp" || valid_temp_piece(y + 1, x - 1,0, 2) == "wp")
+    false
+  end
+
+  def attacked_by_white_knight(y, x)
+    return true if(valid_temp_piece(y - 2, x + 1,0, 2) == "wn" || valid_temp_piece(y - 2, x - 1,0, 2) == "wn" || valid_temp_piece(y + 2, x - 1,0, 2) == "wn" || valid_temp_piece(y + 2, x + 1,0, 2) == "wn" || valid_temp_piece(y - 1, x + 2,0, 2) == "wn" || valid_temp_piece(y - 1, x - 2,0, 2) == "wn" || valid_temp_piece(y + 1, x + 2,0, 2) == "wn" || valid_temp_piece(y + 1, x - 2,0, 2) == "wn")
+    false
+  end
+
+  def attacked_by_white_king(y, x)
+    return true if(valid_temp_position(y - 1, x - 1) == "wk" || valid_temp_position(y - 1, x) == "wk" || valid_temp_position(y - 1, x + 1) == "wk" || valid_temp_position(y, x - 1) == "wk" || valid_temp_position(y, x + 1) == "wk" || valid_temp_position(y + 1, x - 1) == "wk" || valid_temp_position(y + 1, x) == "wk" || valid_temp_position(y + 1, x + 1) == "wk")
+    false
+  end
+
+  def attacked_by_white_in_diagonals(y, x)
+    @bishop_movements.each do |bishop_movement|
+      new_y = y
+      new_x = x
+      loop do
+        new_y+=bishop_movement.y
+        new_x+=bishop_movement.x
+        if(valid_temp_piece(new_y_new_x, 0, 2) == 'wq' || valid_temp_piece(new_y_new_x, 0, 2) == 'wb')
+          return true
+        elsif(valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
+          break
+        end
+      end
+    end
+    false
+  end
+
+  def attacked_by_white_in_rowcolumns(y, x)
+    @rock_movements.each do |rock_movement|
+      new_y = y
+      new_x = x
+      loop do
+        new_y+=rock_movement.y
+        new_x+=rock_movement.x
+        if(valid_temp_piece(new_y_new_x, 0, 2) == 'wq' || valid_temp_piece(new_y_new_x, 0, 2) == 'wr')
+          return true
+        elsif(valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
+          break
+        end
+      end
+    end
+    false
+  end
+
+  def valid_temp_position(y, x)
+    return @temp_cells[y][x] if y >= 0 && y <= 7 && x >= 0 && x <= 7
+    "v"
+  end
+
+  def valid_temp_piece(y, x, init, length)
+    return "v" unless y >= 0 && y <= 7 && x >= 0 && x <= 7
+    tempCells[y][x][init...init+length]
+  end
+
   def valid_position(y, x)
     return @cells[y][x] if y >= 0 && y <= 7 && x >= 0 && x <= 7
     "v"
   end
+
+  ################################################################
+  
 end
