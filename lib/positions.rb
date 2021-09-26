@@ -581,11 +581,11 @@ class Positions
       new_y = y
       new_x = x
       loop do
-        new_y+=bishop_movement.y
-        new_x+=bishop_movement.x
-        if(valid_temp_piece(new_y_new_x, 0, 2) == 'bq' || valid_temp_piece(new_y_new_x, 0, 2) == 'bb')
+        new_y += bishop_movement.y
+        new_x += bishop_movement.x
+        if (valid_temp_piece(new_y_new_x, 0, 2) == "bq" || valid_temp_piece(new_y_new_x, 0, 2) == "bb")
           return true
-        elsif(valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
+        elsif (valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
           break
         end
       end
@@ -598,11 +598,11 @@ class Positions
       new_y = y
       new_x = x
       loop do
-        new_y+=rock_movement.y
-        new_x+=rock_movement.x
-        if(valid_temp_piece(new_y_new_x, 0, 2) == 'bq' || valid_temp_piece(new_y_new_x, 0, 2) == 'br')
+        new_y += rock_movement.y
+        new_x += rock_movement.x
+        if (valid_temp_piece(new_y_new_x, 0, 2) == "bq" || valid_temp_piece(new_y_new_x, 0, 2) == "br")
           return true
-        elsif(valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
+        elsif (valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
           break
         end
       end
@@ -611,17 +611,17 @@ class Positions
   end
 
   def attacked_by_white_pawn(y, x)
-    return true if(valid_temp_piece(y + 1, x + 1,0, 2) == "wp" || valid_temp_piece(y + 1, x - 1,0, 2) == "wp")
+    return true if (valid_temp_piece(y + 1, x + 1, 0, 2) == "wp" || valid_temp_piece(y + 1, x - 1, 0, 2) == "wp")
     false
   end
 
   def attacked_by_white_knight(y, x)
-    return true if(valid_temp_piece(y - 2, x + 1,0, 2) == "wn" || valid_temp_piece(y - 2, x - 1,0, 2) == "wn" || valid_temp_piece(y + 2, x - 1,0, 2) == "wn" || valid_temp_piece(y + 2, x + 1,0, 2) == "wn" || valid_temp_piece(y - 1, x + 2,0, 2) == "wn" || valid_temp_piece(y - 1, x - 2,0, 2) == "wn" || valid_temp_piece(y + 1, x + 2,0, 2) == "wn" || valid_temp_piece(y + 1, x - 2,0, 2) == "wn")
+    return true if (valid_temp_piece(y - 2, x + 1, 0, 2) == "wn" || valid_temp_piece(y - 2, x - 1, 0, 2) == "wn" || valid_temp_piece(y + 2, x - 1, 0, 2) == "wn" || valid_temp_piece(y + 2, x + 1, 0, 2) == "wn" || valid_temp_piece(y - 1, x + 2, 0, 2) == "wn" || valid_temp_piece(y - 1, x - 2, 0, 2) == "wn" || valid_temp_piece(y + 1, x + 2, 0, 2) == "wn" || valid_temp_piece(y + 1, x - 2, 0, 2) == "wn")
     false
   end
 
   def attacked_by_white_king(y, x)
-    return true if(valid_temp_position(y - 1, x - 1) == "wk" || valid_temp_position(y - 1, x) == "wk" || valid_temp_position(y - 1, x + 1) == "wk" || valid_temp_position(y, x - 1) == "wk" || valid_temp_position(y, x + 1) == "wk" || valid_temp_position(y + 1, x - 1) == "wk" || valid_temp_position(y + 1, x) == "wk" || valid_temp_position(y + 1, x + 1) == "wk")
+    return true if (valid_temp_position(y - 1, x - 1) == "wk" || valid_temp_position(y - 1, x) == "wk" || valid_temp_position(y - 1, x + 1) == "wk" || valid_temp_position(y, x - 1) == "wk" || valid_temp_position(y, x + 1) == "wk" || valid_temp_position(y + 1, x - 1) == "wk" || valid_temp_position(y + 1, x) == "wk" || valid_temp_position(y + 1, x + 1) == "wk")
     false
   end
 
@@ -630,11 +630,11 @@ class Positions
       new_y = y
       new_x = x
       loop do
-        new_y+=bishop_movement.y
-        new_x+=bishop_movement.x
-        if(valid_temp_piece(new_y_new_x, 0, 2) == 'wq' || valid_temp_piece(new_y_new_x, 0, 2) == 'wb')
+        new_y += bishop_movement.y
+        new_x += bishop_movement.x
+        if (valid_temp_piece(new_y_new_x, 0, 2) == "wq" || valid_temp_piece(new_y_new_x, 0, 2) == "wb")
           return true
-        elsif(valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
+        elsif (valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
           break
         end
       end
@@ -647,11 +647,11 @@ class Positions
       new_y = y
       new_x = x
       loop do
-        new_y+=rock_movement.y
-        new_x+=rock_movement.x
-        if(valid_temp_piece(new_y_new_x, 0, 2) == 'wq' || valid_temp_piece(new_y_new_x, 0, 2) == 'wr')
+        new_y += rock_movement.y
+        new_x += rock_movement.x
+        if (valid_temp_piece(new_y_new_x, 0, 2) == "wq" || valid_temp_piece(new_y_new_x, 0, 2) == "wr")
           return true
-        elsif(valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
+        elsif (valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
           break
         end
       end
@@ -666,7 +666,7 @@ class Positions
 
   def valid_temp_piece(y, x, init, length)
     return "v" unless y >= 0 && y <= 7 && x >= 0 && x <= 7
-    tempCells[y][x][init...init+length]
+    tempCells[y][x][init...init + length]
   end
 
   def valid_position(y, x)
@@ -674,6 +674,75 @@ class Positions
     "v"
   end
 
-  ################################################################
-  
+  def set_initial_board
+    @cells = Array.new(8, Array.new(8, "").clone)
+    @black_pieces.each { |piece, position| @cells[position.y, position.x] = piece }
+    @white_pieces.each { |piece, position| @cells[position.y, position.x] = piece }
+  end
+
+  def update_board_details_after_white_move(last_move)
+    selected_move_info = last_move.split(",")
+    @black_pieces.delete(selected_move_info.last) unless (selected_move_info.last == "") # unless change of position with no capture
+    if (selected_move_info[0] != selected_move_info[3]) # if promotion
+      @white_pieces.delete(selected_move_info.first)
+      @white_pieces[selected_move_info[3]] = Cell.new(selected_move_info[4].to_i, selected_move_info[5].to_i)
+      update_white_promotion(selected_move_info[3])
+    elsif (selected_move_info.last == "castling")
+      if (selected_move_info[5] == "6") then @white_pieces["wr2"] = Cell.new(7, 5) else @white_pieces["wr1"] = Cell.new(7, 3) end
+      @white_short_castling = false
+      @white_long_castling = false
+    end
+    if (selected_move_info.first == "wk") # if last move was white king move
+      @white_short_castling = false
+      @white_long_castling = false
+    elsif (selected_move_info.first == "wr1") # else if selected last move is white rock 1 move
+      @white_long_castling = false
+    elsif (selected_move_info.first == "wr2") # else if selected last move is white rock 2 move
+      @white_short_castling = false
+    end
+    if (selected_move_info[4] == "0" && selected_move_info[5] == "0") # if last white move to the position of black rock 1
+      @black_long_castling = false
+    elsif (selected_move_info[4] == "0" && selected_move_info[5] == "7") # else if last white move to the position of black rock 2
+      @black_short_castling = false
+    end
+    @white_pieces[selected_move_info[3]] = Cell.new(selected_move_info[4].to_i, selected_move_info[5].to_i)
+    @last_movement = last_move
+  end
+
+  def update_board_details_after_black_move(last_move)
+    selected_move_info = last_move.split(",")
+    @white_pieces.delete(selected_move_info.last) unless (selected_move_info.last == "") # unless change of position with no capture
+    if (selected_move_info[0] != selected_move_info[3]) # if promotion
+      @black_pieces.delete(selected_move_info.first)
+      @black_pieces[selected_move_info[3]] = Cell.new(selected_move_info[4].to_i, selected_move_info[5].to_i)
+      update_black_promotion(selected_move_info[3])
+    elsif (selected_move_info.last == "castling")
+      if (selected_move_info[5] == "6") then @black_pieces["br2"] = Cell.new(0, 5) else @black_pieces["br1"] = Cell.new(0, 3) end
+      @black_long_castling = false
+      @black_short_castling = false
+    end
+    if (selected_move_info.first == "bk") # if last move was black king move
+      @black_long_castling = false
+      @black_short_castling = false
+    elsif (selected_move_info.first == "br1") # else if selected last move is black rock 1 move
+      @black_long_castling = false
+    elsif (selected_move_info.first == "br2") # else if selected last move is black rock 2 move
+      @black_short_castling = false
+    end
+    if (selected_move_info[4] == "7" && selected_move_info[5] == "0") # if last black move to the position of white rock 1
+      @white_long_castling = false
+    elsif (selected_move_info[4] == "7" && selected_move_info[5] == "7") # else if last black move to the position of white rock 2
+      @white_short_castling = false
+    end
+    @black_pieces[selected_move_info[3]] = Cell.new(selected_move_info[4].to_i, selected_move_info[5].to_i)
+    @last_movement = last_move
+  end
+
+  def update_white_promotion(white_promoted)
+    if (white_promoted =~ /^wq/) then @next_white_queen += 1 elsif (white_promoted =~ /^wr/) then @next_white_rock += 1 elsif (white_promoted =~ /^wb/) then @next_white_bishop += 1 else @next_white_knight += 1 end
+  end
+
+  def update_black_promotion(black_promoted)
+    if (black_promoted =~ /^bq/) then @next_black_queen += 1 elsif (black_promoted =~ /^br/) then @next_black_rock += 1 elsif (black_promoted =~ /^bb/) then @next_black_bishop += 1 else @next_black_knight += 1 end
+  end
 end
