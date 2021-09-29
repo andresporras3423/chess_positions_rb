@@ -415,7 +415,7 @@ class Positions
       @temp_cells[pawn.y][pawn.x] = ""
       @temp_cells[pawn.y - 1][pawn.x] = @cells[pawn.y][pawn.x]
       unless (white_king_attacked(Cell.new(king.y, king.x)))
-        if (pawn.y - 1 > 0) then available_white_moves.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y - 1},#{pawn.x},") else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y - 1, pawn.x, available_movements) end
+        if (pawn.y - 1 > 0) then available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y - 1},#{pawn.x},") else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y - 1, pawn.x, available_movements) end
       end
     end
     if (pawn.y == 6)
