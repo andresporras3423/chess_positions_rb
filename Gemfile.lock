@@ -7,6 +7,7 @@ GEM
     parallel (1.20.1)
     parser (3.0.2.0)
       ast (~> 2.4.1)
+    pg (1.2.3-x64-mingw32)
     rainbow (3.0.0)
     regexp_parser (2.1.1)
     rexml (3.2.5)
@@ -42,6 +43,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  pg
   rspec
   rubocop
 

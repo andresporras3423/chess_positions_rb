@@ -1,4 +1,7 @@
 require_relative "positions"
+require_relative "save_positions"
+require_relative "board_data"
+require "byebug"
 
 class Game
   def initialize(save_)
@@ -73,7 +76,7 @@ class Game
       @positions.white_short_castling,
       last_movement_reduced,
       total_movements)
-      @save_positions.save_position(bd) if(save_in_database) 
+      @save_positions.save_position(bd) if(@save_in_database) 
       @boards.push(bd)
   end
 

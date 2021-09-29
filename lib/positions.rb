@@ -3,6 +3,10 @@ require "set"
 require_relative "Cell"
 
 class Positions
+  attr_reader :knight_movements, :king_movements, :bishop_movements, :rock_movements
+  attr_accessor :last_movement, :black_long_castling, :black_short_castling, :white_long_castling, :white_short_castling,
+  :next_black_queen, :next_black_rock, :next_black_bishop, :next_black_knight, :next_white_queen, :next_white_rock, :next_white_bishop, :next_white_knight,
+  :cells, :temp_cells, :black_pieces, :white_pieces
   def initialize
     @knight_movements = [
       Cell.new(1, 2),
@@ -42,7 +46,7 @@ class Positions
 
     @last_movement = ",,,,,,"
     @black_long_castling = true
-    @lack_short_castling = true
+    @black_short_castling = true
     @white_long_castling = true
     @white_short_castling = true
 
@@ -55,8 +59,8 @@ class Positions
     @next_white_bishop = 3
     @next_white_knight = 3
 
-    @cells = Array.new(8, Array.new(8, "").clone)
-    @temp_cells = Array.new(8, Array.new(8, "").clone)
+    @cells = Array.new(8).map{Array.new(8,"")}
+    @temp_cells = Array.new(8).map{Array.new(8,"")}
 
     @black_pieces = {
       "br1" => Cell.new(0, 0),
@@ -77,22 +81,22 @@ class Positions
       "bp8" => Cell.new(1, 7),
     }
     @white_pieces = {
-      "wp1" => Cell.new(0, 0),
-      "wp2" => Cell.new(0, 1),
-      "wp3" => Cell.new(0, 2),
-      "wp4" => Cell.new(0, 3),
-      "wp5" => Cell.new(0, 4),
-      "wp6" => Cell.new(0, 5),
-      "wp7" => Cell.new(0, 6),
-      "wp8" => Cell.new(0, 7),
-      "wr1" => Cell.new(1, 0),
-      "wn1" => Cell.new(1, 1),
-      "wb1" => Cell.new(1, 2),
-      "wq1" => Cell.new(1, 3),
-      "wk" => Cell.new(1, 4),
-      "wb2" => Cell.new(1, 5),
-      "wn2" => Cell.new(1, 6),
-      "wr2" => Cell.new(1, 7),
+      "wp1" => Cell.new(6, 0),
+      "wp2" => Cell.new(6, 1),
+      "wp3" => Cell.new(6, 2),
+      "wp4" => Cell.new(6, 3),
+      "wp5" => Cell.new(6, 4),
+      "wp6" => Cell.new(6, 5),
+      "wp7" => Cell.new(6, 6),
+      "wp8" => Cell.new(6, 7),
+      "wr1" => Cell.new(7, 0),
+      "wn1" => Cell.new(7, 1),
+      "wb1" => Cell.new(7, 2),
+      "wq1" => Cell.new(7, 3),
+      "wk" => Cell.new(7, 4),
+      "wb2" => Cell.new(7, 5),
+      "wn2" => Cell.new(7, 6),
+      "wr2" => Cell.new(7, 7),
     }
   end
 
@@ -388,7 +392,7 @@ class Positions
   def available_white_knight_moves(piece, knight)
     king = @white_pieces["wk"]
     available_movements = Set.new
-    knight_movements.each do |knight_movement|
+    @knight_movements.each do |knight_movement|
       cell_ = valid_position(knight.y + knight_movement.y, knight.x + knight_movement.x)
       if (cell_ == "" || cell_[0] == "b")
         @temp_cells = @cells.clone
@@ -583,7 +587,7 @@ class Positions
       loop do
         new_y += bishop_movement.y
         new_x += bishop_movement.x
-        if (valid_temp_piece(new_y_new_x, 0, 2) == "bq" || valid_temp_piece(new_y_new_x, 0, 2) == "bb")
+        if (valid_temp_piece(new_y, new_x, 0, 2) == "bq" || valid_temp_piece(new_y, new_x, 0, 2) == "bb")
           return true
         elsif (valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
           break
@@ -600,7 +604,7 @@ class Positions
       loop do
         new_y += rock_movement.y
         new_x += rock_movement.x
-        if (valid_temp_piece(new_y_new_x, 0, 2) == "bq" || valid_temp_piece(new_y_new_x, 0, 2) == "br")
+        if (valid_temp_piece(new_y, new_x, 0, 2) == "bq" || valid_temp_piece(new_y, new_x, 0, 2) == "br")
           return true
         elsif (valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
           break
@@ -666,7 +670,7 @@ class Positions
 
   def valid_temp_piece(y, x, init, length)
     return "v" unless y >= 0 && y <= 7 && x >= 0 && x <= 7
-    tempCells[y][x][init...init + length]
+    @temp_cells[y][x][init...init + length]
   end
 
   def valid_position(y, x)
@@ -675,9 +679,11 @@ class Positions
   end
 
   def set_initial_board
-    @cells = Array.new(8, Array.new(8, "").clone)
-    @black_pieces.each { |piece, position| @cells[position.y, position.x] = piece }
-    @white_pieces.each { |piece, position| @cells[position.y, position.x] = piece }
+    @cells = Array.new(8).map{Array.new(8,"")}
+    @black_pieces.each { |piece, position|
+      @cells[position.y][position.x] = piece 
+    }
+    @white_pieces.each { |piece, position| @cells[position.y][position.x] = piece }
   end
 
   def update_board_details_after_white_move(last_move)
