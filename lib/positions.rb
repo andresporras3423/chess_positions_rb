@@ -164,7 +164,7 @@ class Positions
         @temp_cells[knight.y][knight.x] = ""
         @temp_cells[knight.y + knight_movement.y][knight.x + knight_movement.x] = @cells[knight.x][knight.y]
         unless (black_king_attacked(Cell.new(king.y, king.x)))
-          available_movements.add("#{piece},#{knight.y},#{knight.x},#{piece},#{knight.y + knight_movements.y},#{knight.x + knight_movements.x},#{cells[knight.y + knight_movements.y, knight.x + knight_movements.x]}")
+          available_movements.add("#{piece},#{knight.y},#{knight.x},#{piece},#{knight.y + knight_movement.y},#{knight.x + knight_movement.x},#{@cells[knight.y + knight_movement.y][knight.x + knight_movement.x]}")
         end
       end
     end
@@ -270,7 +270,7 @@ class Positions
         cell_ = valid_position(position_.y, position_.x)
         if (cell_ == "" || cell_ =~ /^w/)
           @temp_cells = @cells.clone
-          @temp_cells = ""
+          @temp_cells[bishop.y][bishop.x] = ""
           @temp_cells[position_.y][position_.x] = @cells[bishop.y][bishop.x]
           unless black_king_attacked(Cell.new(king.y, king.x))
             available_movements.add("#{piece},#{bishop.y},#{bishop.x},#{piece},#{position_.y},#{position_.x},#{@cells[position_.y][position_.x]}")
@@ -294,9 +294,9 @@ class Positions
         if (cell_ == "" || cell_ =~ /^w/)
           @temp_cells = @cells.clone
           @temp_cells[rock.y][rock.x] = ""
-          @temp_cells[position_.y][position_.x] = @cells[rock.y, rock.x]
+          @temp_cells[position_.y][position_.x] = @cells[rock.y][rock.x]
           unless black_king_attacked(Cell.new(king.y, king.x))
-            available_movements.add("#{piece},#{rock.y},#{rock.x},#{piece},#{position_.y},#{position_.x},#{@cells[position_.y, position_.x]}")
+            available_movements.add("#{piece},#{rock.y},#{rock.x},#{piece},#{position_.y},#{position_.x},#{@cells[position_.y][position_.x]}")
           end
         end
         break if (cell_ != "")
@@ -370,7 +370,7 @@ class Positions
     @king_movements.each do |king_movement|
       n_cell = valid_position(king.y + king_movement.y, king.x + king_movement.x)
       if (n_cell == "" || n_cell =~ /^[b]/)
-        @temp_cells = cells.clone()
+        @temp_cells = @cells.clone()
         @temp_cells[king.y][king.x] = ""
         @temp_cells[king.y + king_movement.y][king.x + king_movement.x] = "wk"
         unless (white_king_attacked(Cell.new(king.y + king_movement.y, king.x + king_movement.x)))
@@ -399,7 +399,7 @@ class Positions
         @temp_cells[knight.y][knight.x] = ""
         @temp_cells[knight.y + knight_movement.y][knight.x + knight_movement.x] = @cells[knight.x][knight.y]
         unless (white_king_attacked(Cell.new(king.y, king.x)))
-          available_movements.add("#{piece},#{knight.y},#{knight.x},#{piece},#{knight.y + knight_movements.y},#{knight.x + knight_movements.x},#{cells[knight.y + knight_movements.y, knight.x + knight_movements.x]}")
+          available_movements.add("#{piece},#{knight.y},#{knight.x},#{piece},#{knight.y + knight_movement.y},#{knight.x + knight_movement.x},#{@cells[knight.y + knight_movement.y][knight.x + knight_movement.x]}")
         end
       end
     end
@@ -490,7 +490,7 @@ class Positions
         cell_ = valid_position(position_.y, position_.x)
         if (cell_ == "" || cell_ =~ /^b/)
           @temp_cells = @cells.clone
-          @temp_cells = ""
+          @temp_cells[bishop.y][bishop.x] = ""
           @temp_cells[position_.y][position_.x] = @cells[bishop.y][bishop.x]
           unless white_king_attacked(Cell.new(king.y, king.x))
             available_movements.add("#{piece},#{bishop.y},#{bishop.x},#{piece},#{position_.y},#{position_.x},#{@cells[position_.y][position_.x]}")
@@ -514,9 +514,9 @@ class Positions
         if (cell_ == "" || cell_ =~ /^b/)
           @temp_cells = @cells.clone
           @temp_cells[rock.y][rock.x] = ""
-          @temp_cells[position_.y][position_.x] = @cells[rock.y, rock.x]
+          @temp_cells[position_.y][position_.x] = @cells[rock.y][rock.x]
           unless white_king_attacked(Cell.new(king.y, king.x))
-            available_movements.add("#{piece},#{rock.y},#{rock.x},#{piece},#{position_.y},#{position_.x},#{@cells[position_.y, position_.x]}")
+            available_movements.add("#{piece},#{rock.y},#{rock.x},#{piece},#{position_.y},#{position_.x},#{@cells[position_.y][position_.x]}")
           end
         end
         break if (cell_ != "")
@@ -680,9 +680,7 @@ class Positions
 
   def set_initial_board
     @cells = Array.new(8).map{Array.new(8,"")}
-    @black_pieces.each { |piece, position|
-      @cells[position.y][position.x] = piece 
-    }
+    @black_pieces.each { |piece, position| @cells[position.y][position.x] = piece }
     @white_pieces.each { |piece, position| @cells[position.y][position.x] = piece }
   end
 
