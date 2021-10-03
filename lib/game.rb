@@ -59,7 +59,7 @@ class Game
       add_recent_board(total_movements)
       # start_game
       return true
-    elsif(@positions.black_pieces.keys.length + positions.white_pieces.keys.length == 2)
+    elsif(@positions.black_pieces.keys.length + @positions.white_pieces.keys.length == 2)
       # start_game
       return true
     end
