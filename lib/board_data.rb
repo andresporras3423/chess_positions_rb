@@ -21,7 +21,7 @@ class BoardData
   def print_info
     """
     current board: #{@pieces_position}
-    total black pieces: #{@otal_black_pieces}
+    total black pieces: #{@total_black_pieces}
     total white pieces: #{@total_white_pieces}
     total pieces: #{@total_black_pieces+@total_white_pieces}
     black long castling: #{@black_long_castling}

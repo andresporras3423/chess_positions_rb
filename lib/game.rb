@@ -81,7 +81,7 @@ class Game
   end
 
   def last_movement_reduced
-    @positions.last_movement.split(",").map{|pos| pos[0...2]}.join(",")
+    @positions.last_movement.split(",",-1).map{|pos| pos[0...2]}.join(",")
   end
 
   def print_last_board_info

@@ -116,15 +116,15 @@ class Positions
     moves = Set.new
     moves.merge(available_black_king_moves)
     @black_pieces.each do |piece, position|
-      if ("bn" =~ /^(bn)/)
+      if (piece =~ /^(bn)/)
         moves.merge(available_black_knight_moves(piece, position))
-      elsif ("bn" =~ /^(bb)/)
+      elsif (piece =~ /^(bb)/)
         moves.merge(available_black_bishop_moves(piece, position))
-      elsif ("bn" =~ /^(br)/)
+      elsif (piece =~ /^(br)/)
         moves.merge(available_black_rock_moves(piece, position))
-      elsif ("bn" =~ /^(bq)/)
+      elsif (piece =~ /^(bq)/)
         moves.merge(available_black_queen_moves(piece, position))
-      elsif ("bn" =~ /^(bp)/)
+      elsif (piece =~ /^(bp)/)
         moves.merge(available_black_pawn_moves(piece, position))
       end
     end
@@ -141,7 +141,7 @@ class Positions
         @temp_cells[king.y][king.x] = ""
         @temp_cells[king.y + king_movement.y][king.x + king_movement.x] = "bk"
         unless (black_king_attacked(Cell.new(king.y + king_movement.y, king.x + king_movement.x)))
-          available_movements.add("bk,#{king.y},#{king.x},bk,#{king.y + king_movement.y},#{king.x + king_movement.x},#{cells[king.y + king_movement.y][king.x + king_movement.x]}")
+          available_movements.add("bk,#{king.y},#{king.x},bk,#{king.y + king_movement.y},#{king.x + king_movement.x},#{@cells[king.y + king_movement.y][king.x + king_movement.x]}")
         end
       end
     end
@@ -174,7 +174,7 @@ class Positions
   end
 
   def available_black_pawn_moves(piece, pawn)
-    king = @blackPieces["bk"]
+    king = @black_pieces["bk"]
     available_movements = Set.new
     cell_ = valid_position(pawn.y, pawn.x)
     if (cell_ == "")
@@ -192,14 +192,14 @@ class Positions
         @temp_cells = DeepClone.clone(@cells)
         @temp_cells[pawn.y][pawn.x] = ""
         @temp_cells[pawn.y + 2][pawn.x] = @cells[pawn.y][pawn.x]
-        availableMovements.Add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 2},#{pawn.x},") unless black_king_attacked(Cell.new(king.y, king.x))
+        available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 2},#{pawn.x},") unless black_king_attacked(Cell.new(king.y, king.x))
       end
     end
     cell_ = valid_position(pawn.y + 1, pawn.x + 1)
     if (cell_[0] == "w")
       @temp_cells = DeepClone.clone(@cells)
       @temp_cells[pawn.y][pawn.x] = ""
-      @tempCells[pawn.y + 1][pawn.x + 1] = @cells[pawn.y][pawn.x]
+      @temp_cells[pawn.y + 1][pawn.x + 1] = @cells[pawn.y][pawn.x]
       unless (black_king_attacked(Cell.new(king.y, king.x)))
         if (pawn.y + 1 < 7) then available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 1},#{pawn.x + 1},#{@cells[pawn.y + 1][pawn.x + 1]}") else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y + 1, pawn.x + 1, available_movements) end
       end
@@ -209,7 +209,7 @@ class Positions
     if (cell_[0] == "w")
       @temp_cells = DeepClone.clone(@cells)
       @temp_cells[pawn.y][pawn.x] = ""
-      @temp_cells[pawn.y + 1][parn.x - 1] = @cells[pawn.y][pawn.x]
+      @temp_cells[pawn.y + 1][pawn.x - 1] = @cells[pawn.y][pawn.x]
       unless black_king_attacked(Cell.new(king.y, king.x))
         if (pawn.y + 1 < 7) then available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 1},#{pawn.x - 1},#{@cells[pawn.y + 1][pawn.x - 1]}") else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y + 1, pawn.x - 1, available_movements) end
       end
@@ -234,7 +234,7 @@ class Positions
   end
 
   def can_black_en_passant(y, x)
-    move_details = @last_movement.split(",")
+    move_details = @last_movement.split(",",-1)
     if (move_details[0] =~ /^w/ &&
         move_details[1].to_i == y + 2 &&
         move_details[2].to_i == x &&
@@ -248,7 +248,7 @@ class Positions
   end
 
   def can_white_en_passant(y, x)
-    move_details = @last_movement.split(",")
+    move_details = @last_movement.split(",",-1)
     if (move_details[0] =~ /^b/ &&
         move_details[1].to_i == y - 2 &&
         move_details[2].to_i == x &&
@@ -315,7 +315,7 @@ class Positions
       loop do
         position_.x += rock_movement.x
         position_.y += rock_movement.y
-        cell_ = valid_position(position_.x, position_.y)
+        cell_ = valid_position(position_.y, position_.x)
         if (cell_ == "" || cell_ =~ /^w/)
           @temp_cells = DeepClone.clone(@cells)
           @temp_cells[queen.y][queen.x] = ""
@@ -351,18 +351,23 @@ class Positions
     moves = Set.new
 
     moves.merge(available_white_king_moves)
-
+    
     @white_pieces.each do |piece, position|
       if (piece =~ /^(wn)/)
         moves.merge(available_white_knight_moves(piece, position))
+        
       elsif (piece =~ /^(wb)/)
         moves.merge(available_white_bishop_moves(piece, position))
+        
       elsif (piece =~ /^(wr)/)
         moves.merge(available_white_rock_moves(piece, position))
+        
       elsif (piece =~ /^(wq)/)
         moves.merge(available_white_queen_moves(piece, position))
+        
       elsif (piece =~ /^(wp)/)
         moves.merge(available_white_pawn_moves(piece, position))
+        
       end
     end
     moves
@@ -378,7 +383,7 @@ class Positions
         @temp_cells[king.y][king.x] = ""
         @temp_cells[king.y + king_movement.y][king.x + king_movement.x] = "wk"
         unless (white_king_attacked(Cell.new(king.y + king_movement.y, king.x + king_movement.x)))
-          available_movements.add("wk,#{king.y},#{king.x},wk,#{king.y + king_movement.y},#{king.x + king_movement.x},#{cells[king.y + king_movement.y][king.x + king_movement.x]}")
+          available_movements.add("wk,#{king.y},#{king.x},wk,#{king.y + king_movement.y},#{king.x + king_movement.x},#{@cells[king.y + king_movement.y][king.x + king_movement.x]}")
         end
       end
     end
@@ -453,7 +458,7 @@ class Positions
       @temp_cells[pawn.y][pawn.x] = ""
       @temp_cells[pawn.y - 1][pawn.x - 1] = @cells[pawn.y][pawn.x]
       unless (white_king_attacked(Cell.new(king.y, king.x)))
-        if (pawn.y - 1 > 0) then available_movements.Add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y - 1},#{pawn.x - 1},#{@cells[pawn.y - 1][pawn.x - 1]}") else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y - 1, pawn.x - 1, available_movements) end
+        if (pawn.y - 1 > 0) then available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y - 1},#{pawn.x - 1},#{@cells[pawn.y - 1][pawn.x - 1]}") else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y - 1, pawn.x - 1, available_movements) end
       end
     end
     
@@ -467,8 +472,8 @@ class Positions
     
     if (can_white_en_passant(pawn.y, pawn.x - 1))
       @temp_cells = DeepClone.clone(@cells)
-      @temp_cells[pawn.y, pawn.x] = ""
-      @temp_cells[pawn.y, pawn.x - 1] = ""
+      @temp_cells[pawn.y][pawn.x] = ""
+      @temp_cells[pawn.y][pawn.x - 1] = ""
       @temp_cells[pawn.y - 1][pawn.x - 1] = @cells[pawn.y][pawn.x]
       available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y - 1},#{pawn.x - 1},#{@cells[pawn.y][pawn.x - 1]}") unless (white_king_attacked(Cell.new(king.y, king.x)))
     end
@@ -544,7 +549,7 @@ class Positions
       loop do
         position_.x += rock_movement.x
         position_.y += rock_movement.y
-        cell_ = valid_position(position_.x, position_.y)
+        cell_ = valid_position(position_.y, position_.x)
         if (cell_ == "" || cell_ =~ /^b/)
           @temp_cells = DeepClone.clone(@cells)
           @temp_cells[queen.y][queen.x] = ""
@@ -647,7 +652,7 @@ class Positions
       loop do
         new_y += bishop_movement.y
         new_x += bishop_movement.x
-        if (valid_temp_piece(new_y_new_x, 0, 2) == "wq" || valid_temp_piece(new_y_new_x, 0, 2) == "wb")
+        if (valid_temp_piece(new_y, new_x, 0, 2) == "wq" || valid_temp_piece(new_y, new_x, 0, 2) == "wb")
           return true
         elsif (valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
           break
@@ -664,7 +669,7 @@ class Positions
       loop do
         new_y += rock_movement.y
         new_x += rock_movement.x
-        if (valid_temp_piece(new_y_new_x, 0, 2) == "wq" || valid_temp_piece(new_y_new_x, 0, 2) == "wr")
+        if (valid_temp_piece(new_y, new_x, 0, 2) == "wq" || valid_temp_piece(new_y, new_x, 0, 2) == "wr")
           return true
         elsif (valid_temp_position(new_y, new_x) == "v" || valid_temp_position(new_y, new_x) != "")
           break
@@ -691,12 +696,13 @@ class Positions
 
   def set_initial_board
     @cells = Array.new(8).map { Array.new(8, "") }
+    @cells = Array.new(8).map { Array.new(8, "") }
     @black_pieces.each { |piece, position| @cells[position.y][position.x] = piece }
     @white_pieces.each { |piece, position| @cells[position.y][position.x] = piece }
   end
 
   def update_board_details_after_white_move(last_move)
-    selected_move_info = last_move.split(",")
+    selected_move_info = last_move.split(",",-1)
     @black_pieces.delete(selected_move_info.last) unless (selected_move_info.last == "") # unless change of position with no capture
     if (selected_move_info[0] != selected_move_info[3]) # if promotion
       @white_pieces.delete(selected_move_info.first)
@@ -725,7 +731,7 @@ class Positions
   end
 
   def update_board_details_after_black_move(last_move)
-    selected_move_info = last_move.split(",")
+    selected_move_info = last_move.split(",",-1)
     @white_pieces.delete(selected_move_info.last) unless (selected_move_info.last == "") # unless change of position with no capture
     if (selected_move_info[0] != selected_move_info[3]) # if promotion
       @black_pieces.delete(selected_move_info.first)
