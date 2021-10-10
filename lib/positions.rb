@@ -176,10 +176,10 @@ class Positions
   def available_black_pawn_moves(piece, pawn)
     king = @black_pieces["bk"]
     available_movements = Set.new
-    cell_ = valid_position(pawn.y, pawn.x)
+    cell_ = valid_position(pawn.y + 1, pawn.x)
     if (cell_ == "")
       @temp_cells = DeepClone.clone(@cells)
-      @temp_cells[pawn.y, pawn.x] = ""
+      @temp_cells[pawn.y][pawn.x] = ""
       @temp_cells[pawn.y + 1][pawn.x] = @cells[pawn.y][pawn.x]
       unless (black_king_attacked(Cell.new(king.y, king.x)))
         if (pawn.y + 1 < 7) then available_movements.add("#{piece},#{pawn.y},#{pawn.x},#{piece},#{pawn.y + 1},#{pawn.x},") else available_promotion_moves(piece, pawn.y, pawn.x, pawn.y + 1, pawn.x, available_movements) end
@@ -696,7 +696,7 @@ class Positions
 
   def set_initial_board
     @cells = Array.new(8).map { Array.new(8, "") }
-    @cells = Array.new(8).map { Array.new(8, "") }
+    @temp_cells = Array.new(8).map { Array.new(8, "") }
     @black_pieces.each { |piece, position| @cells[position.y][position.x] = piece }
     @white_pieces.each { |piece, position| @cells[position.y][position.x] = piece }
   end
@@ -789,7 +789,7 @@ class Positions
     return true if @white_pieces.keys.any?{|piece| piece=~/^wr/} #any rock?
     return true if @white_pieces.keys.any?{|piece| piece=~/^wq/} #any queen?
     return true if @white_pieces.keys.count{|piece| piece=~/^wn/}>=3 #at least 3 knights
-    return true if @white_pieces.keys.any?{|piece| piece=~/^wb/} && @black_pieces.keys.any?{|piece| piece=~/^bn/} # at least one knight and one bishop
+    return true if @white_pieces.keys.any?{|piece| piece=~/^wb/} && @white_pieces.keys.any?{|piece| piece=~/^wn/} # at least one knight and one bishop
     return true if @white_pieces.any?{|piece, position| piece=~/^wb/ && (position.x+position.y).even?} && @white_pieces.any?{|piece, position| piece=~/^wb/ && (position.x+position.y).odd?} # at least one bishop in black cells and one bishop in white cells
     false
   end
