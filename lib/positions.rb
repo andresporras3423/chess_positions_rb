@@ -766,4 +766,31 @@ class Positions
   def update_black_promotion(black_promoted)
     if (black_promoted =~ /^bq/) then @next_black_queen += 1 elsif (black_promoted =~ /^br/) then @next_black_rock += 1 elsif (black_promoted =~ /^bb/) then @next_black_bishop += 1 else @next_black_knight += 1 end
   end
+
+  def checkmate_still_possible?
+    return true if can_black_checkmate? || can_white_checkmate?
+    false
+  end
+
+  def can_black_checkmate?
+    return false if @black_pieces.length==1
+    return true if @black_pieces.keys.any?{|piece| piece=~/^bp/} #any pawn?
+    return true if @black_pieces.keys.any?{|piece| piece=~/^br/} #any rock?
+    return true if @black_pieces.keys.any?{|piece| piece=~/^bq/} #any queen?
+    return true if @black_pieces.keys.count{|piece| piece=~/^bn/}>=3 #at least 3 knights
+    return true if @black_pieces.keys.any?{|piece| piece=~/^bb/} && @black_pieces.keys.any?{|piece| piece=~/^bn/} # at least one knight and one bishop
+    return true if @black_pieces.any?{|piece, position| piece=~/^bb/ && (position.x+position.y).even?} && @black_pieces.any?{|piece, position| piece=~/^bb/ && (position.x+position.y).odd?} # at least one bishop in black cells and one bishop in white cells
+    false
+  end
+
+  def can_white_checkmate?
+    return false if @white_pieces.length==1
+    return true if @white_pieces.keys.any?{|piece| piece=~/^wp/} #any pawn?
+    return true if @white_pieces.keys.any?{|piece| piece=~/^wr/} #any rock?
+    return true if @white_pieces.keys.any?{|piece| piece=~/^wq/} #any queen?
+    return true if @white_pieces.keys.count{|piece| piece=~/^wn/}>=3 #at least 3 knights
+    return true if @white_pieces.keys.any?{|piece| piece=~/^wb/} && @black_pieces.keys.any?{|piece| piece=~/^bn/} # at least one knight and one bishop
+    return true if @white_pieces.any?{|piece, position| piece=~/^wb/ && (position.x+position.y).even?} && @white_pieces.any?{|piece, position| piece=~/^wb/ && (position.x+position.y).odd?} # at least one bishop in black cells and one bishop in white cells
+    false
+  end
 end

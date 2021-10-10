@@ -62,6 +62,8 @@ class Game
     elsif(@positions.black_pieces.keys.length + @positions.white_pieces.keys.length == 2)
       # start_game
       return true
+    elsif(@positions.checkmate_still_possible? == false)
+      return true
     end
     false
   end

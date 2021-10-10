@@ -11,12 +11,6 @@ class SavePositions
       current_time = Time.now
       res = con.exec_params('insert into positions (pieces_position, total_black_pieces, total_white_pieces, black_long_castling, black_short_castling, white_long_castling, white_short_castling, last_movement, movements_available, created_at, updated_at) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', 
       [board.pieces_position, board.total_black_pieces, board.total_white_pieces, board.black_long_castling, board.black_short_castling, board.white_long_castling, board.white_short_castling, board.last_movement, board.movements_available, current_time, current_time])
-      # user = con.user
-      # db_name = con.db
-      # pswd = con.pass
-      # puts "User: #{user}"
-      # puts "Database name: #{db_name}"
-      # puts "Password: #{pswd}"
       puts "res: #{res}"
     rescue PG::Error => e
       puts e.message
