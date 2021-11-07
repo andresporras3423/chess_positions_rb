@@ -403,10 +403,12 @@ class Positions
     available_movements = Set.new
     @knight_movements.each do |knight_movement|
       cell_ = valid_position(knight.y + knight_movement.y, knight.x + knight_movement.x)
+      #byebug if knight_movement.x==-2 && knight_movement.y==1
       if (cell_ == "" || cell_[0] == "b")
         @temp_cells = DeepClone.clone(@cells)
         @temp_cells[knight.y][knight.x] = ""
-        @temp_cells[knight.y + knight_movement.y][knight.x + knight_movement.x] = @cells[knight.x][knight.y]
+        @temp_cells[knight.y + knight_movement.y][knight.x + knight_movement.x] = @cells[knight.y][knight.x]
+        #byebug if knight_movement.x==-2 && knight_movement.y==1
         unless (white_king_attacked(Cell.new(king.y, king.x)))
           available_movements.add("#{piece},#{knight.y},#{knight.x},#{piece},#{knight.y + knight_movement.y},#{knight.x + knight_movement.x},#{@cells[knight.y + knight_movement.y][knight.x + knight_movement.x]}")
         end
