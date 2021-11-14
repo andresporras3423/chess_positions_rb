@@ -3,10 +3,12 @@ require "byebug"
 class BoardData
 
   attr_accessor :pieces_position, :total_black_pieces, :total_white_pieces, :black_long_castling,
-  :black_short_castling, :white_long_castling, :white_short_castling, :last_movement, :movements_available
+  :black_short_castling, :white_long_castling, :white_short_castling, :last_movement, :movements_available, 
+  :next_player
 
   def initialize(pieces_position_, total_black_pieces_, total_white_pieces_, black_long_castling_, 
-                 black_short_castling_, white_long_castling_, white_short_castling_, last_movement_, movements_available_)
+                 black_short_castling_, white_long_castling_, white_short_castling_,
+                  last_movement_, movements_available_, next_player_)
     @pieces_position=pieces_position_
     @total_black_pieces=total_black_pieces_
     @total_white_pieces=total_white_pieces_
@@ -16,6 +18,7 @@ class BoardData
     @white_short_castling=white_short_castling_
     @last_movement=last_movement_
     @movements_available=movements_available_
+    @next_player = next_player_
   end 
 
   def print_info
@@ -30,6 +33,7 @@ class BoardData
     white short castling: #{@white_short_castling}
     most recent movement: #{@last_movement}
     total movements available: #{@movements_available}
+    next_player: #{@next_player}
     """
   end
 end

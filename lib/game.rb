@@ -4,17 +4,19 @@ require_relative "board_data"
 require "byebug"
 
 class Game
-  def initialize(save_)
+  def initialize(save_, max_games_ = 1)
     @save_in_database = save_
     @positions = Positions.new
     @boards = []
     @save_positions = SavePositions.new
+    @total_games = 0
+    @max_games = max_games_
   end
 
   def start_game()
     @positions = Positions.new
     @positions.set_initial_board
-    @boards=[]
+    @boards = []
     next_white_move
   end
 
@@ -55,39 +57,40 @@ class Game
   end
 
   def is_it_game_over(total_movements)
-    if(total_movements==0)
-      add_recent_board(total_movements)
-      # start_game
-      return true
-    elsif(@positions.black_pieces.keys.length + @positions.white_pieces.keys.length == 2)
-      # start_game
-      return true
-    elsif(@positions.checkmate_still_possible? == false)
+    if ((total_movements == 0) || (@positions.black_pieces.keys.length + @positions.white_pieces.keys.length == 2) || (@positions.checkmate_still_possible? == false))
+      add_recent_board(total_movements) if (total_movements == 0)
+      activate_repeat
       return true
     end
     false
   end
 
+  def activate_repeat
+    @total_games += 1
+    start_game if @total_games < @max_games
+  end
+
   def add_recent_board(total_movements)
     bd = BoardData.new(give_current_board,
-      @positions.black_pieces.keys.length,
-      @positions.white_pieces.keys.length,
-      @positions.black_long_castling,
-      @positions.black_short_castling,
-      @positions.white_long_castling,
-      @positions.white_short_castling,
-      last_movement_reduced,
-      total_movements)
-      @save_positions.save_position(bd) if(@save_in_database) 
-      @boards.push(bd)
+                       @positions.black_pieces.keys.length,
+                       @positions.white_pieces.keys.length,
+                       @positions.black_long_castling,
+                       @positions.black_short_castling,
+                       @positions.white_long_castling,
+                       @positions.white_short_castling,
+                       last_movement_reduced,
+                       total_movements,
+                       [",", "b"].include?(last_movement_reduced[0]) ? "white" : "black")
+    @save_positions.save_position(bd) if (@save_in_database)
+    @boards.push(bd)
   end
 
   def last_movement_reduced
-    @positions.last_movement.split(",",-1).map{|pos| pos[0...2]}.join(",")
+    @positions.last_movement.split(",", -1).map { |pos| pos[0...2] }.join(",")
   end
 
   def print_last_board_info
-    puts "turn: #{(@boards.length+1)/2}"
+    puts "turn: #{(@boards.length + 1) / 2}"
     puts @boards.last.print_info
   end
 end
